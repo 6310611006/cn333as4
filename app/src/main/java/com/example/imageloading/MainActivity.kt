@@ -38,17 +38,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ImageLoader() {
-    var width by remember { mutableStateOf(150) }
-    var height by remember { mutableStateOf(220) }
+    var width by remember { mutableStateOf(320) }
+    var height by remember { mutableStateOf(240) }
     var isLoading by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("paris") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Row(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             ImageInput("Width", width) {
                 width = it
             }
@@ -56,12 +57,17 @@ fun ImageLoader() {
             ImageInput("Height", height) {
                 height = it
             }
+            Spacer(modifier = Modifier.width(16.dp))
+            CategoryInput(category) {
+                category = it
+            }
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 isLoading = true
-                imageUrl = "https://api.lorem.space/image/movie?w=$width&h=$height"
+                imageUrl = "https://loremflickr.com/$width/$height/$category"
+                //imageUrl = "https://api.lorem.space/image/movie?w=$width&h=$height"
             }
         ) {
             Text("Load Image")
@@ -76,7 +82,23 @@ fun ImageLoader() {
 }
 
 @Composable
+fun CategoryInput(category: String, onCategoryChange: (String) -> Unit) {
+    Column {
+        Text("Category")
+        var textValue by remember { mutableStateOf(TextFieldValue(category)) }
+        TextField(
+            value = textValue,
+            onValueChange = {
+                textValue = it
+                onCategoryChange(it.text)
+            }
+        )
+    }
+}
+
+@Composable
 fun ImageInput(label: String, value: Int, onValueChange: (Int) -> Unit) {
+    var error by remember { mutableStateOf<String?>(null) }
     Column {
         Text(label)
         var textValue by remember { mutableStateOf(TextFieldValue(value.toString())) }
@@ -84,10 +106,25 @@ fun ImageInput(label: String, value: Int, onValueChange: (Int) -> Unit) {
             value = textValue,
             onValueChange = {
                 textValue = it
-                val intValue = it.text.toIntOrNull() ?: value
-                onValueChange(intValue)
-            }
+                val intValue = it.text.toIntOrNull()
+                if (intValue == null || intValue < 1) {
+                    error = "Please enter a valid number greater than zero"
+                } else {
+                    error = null
+                    onValueChange(intValue)
+                }
+            },
+            isError = error != null,
+            singleLine = true,
         )
+        if (error != null) {
+            Text(
+                text = error!!,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(start = 8.dp),
+            )
+        }
     }
 }
 
@@ -117,8 +154,8 @@ fun DisplayLoading(src: String) {
         contentDescription = "",
         //contentScale = ContentScale.Crop,
         modifier = Modifier
-            .clip(CircleShape)
-            .size(200.dp)
+            //.clip(CircleShape)
+            //.size(200.dp)
     )
 }
 
