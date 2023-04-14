@@ -1,6 +1,7 @@
 package com.example.imageloading
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,35 +44,54 @@ fun ImageLoader() {
     var height by remember { mutableStateOf(240) }
     var isLoading by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("paris") }
-
+    var category by remember { mutableStateOf("Dog") }
+    var showDialog by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(30.dp)) {
             ImageInput("Width", width) {
                 width = it
             }
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.padding(6.dp))
             ImageInput("Height", height) {
                 height = it
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            CategoryInput(category) {
+            Spacer(modifier = Modifier.padding(10.dp))
+            CategoryInput("Category"){
                 category = it
             }
+
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                isLoading = true
-                imageUrl = "https://loremflickr.com/$width/$height/$category"
-                //imageUrl = "https://api.lorem.space/image/movie?w=$width&h=$height"
+                if (width > 1000 || height > 1000) {
+                    showDialog = true
+                } else {
+                    isLoading = true
+                    imageUrl = "https://loremflickr.com/$width/$height/$category"
+                    //imageUrl = "https://api.lorem.space/image/movie?w=$width&h=$height"
+                }
             }
         ) {
             Text("Load Image")
+        }
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Image Too Large") },
+                text = { Text("The image you are trying to load is too large. Please select an image with a width and height of 1000 pixels or less.") },
+                confirmButton = {
+                    Button(
+                        onClick = { showDialog = false },
+                    ) {
+                        Text("OK")
+                    }
+                }
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         if (isLoading) {
@@ -81,26 +102,13 @@ fun ImageLoader() {
     }
 }
 
-@Composable
-fun CategoryInput(category: String, onCategoryChange: (String) -> Unit) {
-    Column {
-        Text("Category")
-        var textValue by remember { mutableStateOf(TextFieldValue(category)) }
-        TextField(
-            value = textValue,
-            onValueChange = {
-                textValue = it
-                onCategoryChange(it.text)
-            }
-        )
-    }
-}
 
 @Composable
 fun ImageInput(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var error by remember { mutableStateOf<String?>(null) }
     Column {
         Text(label)
+        //Spacer(modifier = Modifier.padding(16.dp))
         var textValue by remember { mutableStateOf(TextFieldValue(value.toString())) }
         TextField(
             value = textValue,
@@ -145,7 +153,7 @@ fun DisplayImage(src: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun DisplayLoading(src: String) {
-    Text("Loading...")
+
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(src)
@@ -157,6 +165,49 @@ fun DisplayLoading(src: String) {
             //.clip(CircleShape)
             //.size(200.dp)
     )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CategoryInput(label: String,onItemSelected: (String) -> Unit) {
+    val listItems = arrayOf("Dog","Movie","Game","Album","Book","Face","Fashion","Watch","Furniture", "Cat", "Shoe", "Paris")
+    val contextForToast = LocalContext.current.applicationContext
+
+    var expanded by remember { mutableStateOf(false) }
+    var selectedItem by remember { mutableStateOf(listItems[0]) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        //Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+
+            value = selectedItem,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(text = "Category") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            listItems.forEach { item ->
+                DropdownMenuItem(onClick = {
+                    selectedItem = item
+                    expanded = false
+                    onItemSelected(item) // call the callback function
+                }) {
+                    Text(text = item)
+                }
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
