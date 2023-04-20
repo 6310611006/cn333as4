@@ -68,7 +68,7 @@ fun ImageLoader() {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                if (width > 1000 || height > 1000) {
+                if (width > 1000 || height > 1000 || width < 0 || height < 0) {
                     showDialog = true
                 } else {
                     isLoading = true
