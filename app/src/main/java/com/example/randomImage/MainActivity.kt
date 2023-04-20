@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RandomImageTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -71,7 +70,6 @@ fun ImageLoader() {
                 } else {
                     isLoading = true
                     imageUrl = "https://loremflickr.com/$width/$height/$category"
-                    //imageUrl = "https://api.lorem.space/image/movie?w=$width&h=$height"
                 }
             }
         ) {
@@ -106,7 +104,6 @@ fun ImageInput(label: String, value: Int, onValueChange: (Int) -> Unit) {
     var error by remember { mutableStateOf<String?>(null) }
     Column {
         Text(label)
-        //Spacer(modifier = Modifier.padding(16.dp))
         var textValue by remember { mutableStateOf(TextFieldValue(value.toString())) }
         TextField(
             value = textValue,
@@ -158,10 +155,7 @@ fun DisplayLoading(src: String) {
             .crossfade(true)
             .build(),
         contentDescription = "",
-        //contentScale = ContentScale.Crop,
         modifier = Modifier
-            //.clip(CircleShape)
-            //.size(200.dp)
     )
 }
 
@@ -178,7 +172,6 @@ fun CategoryInput(label: String,onItemSelected: (String) -> Unit) {
         expanded = expanded,
         onExpandedChange = { expanded = it }
     ) {
-        //Spacer(modifier = Modifier.height(16.dp))
         TextField(
 
             value = selectedItem,
@@ -199,7 +192,7 @@ fun CategoryInput(label: String,onItemSelected: (String) -> Unit) {
                 DropdownMenuItem(onClick = {
                     selectedItem = item
                     expanded = false
-                    onItemSelected(item) // call the callback function
+                    onItemSelected(item)
                 }) {
                     Text(text = item)
                 }
