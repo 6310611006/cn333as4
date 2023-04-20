@@ -1,4 +1,4 @@
-package com.example.imageloading.ui.theme
+package com.example.randomImage.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

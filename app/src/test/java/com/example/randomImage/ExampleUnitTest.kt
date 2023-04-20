@@ -1,4 +1,4 @@
-package com.example.imageloading
+package com.example.randomImage
 
 import org.junit.Test
 

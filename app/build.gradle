@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.imageloading'
+    namespace 'com.example.randomImage'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.imageloading"
+        applicationId "com.example.randomImage"
         minSdk 24
         targetSdk 33
         versionCode 1

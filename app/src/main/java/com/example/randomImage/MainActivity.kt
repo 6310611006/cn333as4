@@ -1,7 +1,6 @@
-package com.example.imageloading
+package com.example.randomImage
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -12,20 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.imageloading.ui.theme.ImageLoadingTheme
+import com.example.randomImage.ui.theme.RandomImageTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ImageLoadingTheme {
+            RandomImageTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -213,7 +211,7 @@ fun CategoryInput(label: String,onItemSelected: (String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    ImageLoadingTheme {
+    RandomImageTheme {
         ImageLoader()
     }
 }
